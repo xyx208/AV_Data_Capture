@@ -32,17 +32,20 @@ def get_number(filepath: str) -> str:
         filepath = filepath.replace("_", "-")
         filepath.strip('22-sht.me').strip('-HD').strip('-hd')
         filename = str(re.sub("\[\d{4}-\d{1,2}-\d{1,2}\] - ", "", filepath))  # 去除文件名中时间
+        # filepath = filepath.replace("_", "-")
+        filepath.strip('22-sht.me').strip('-HD').strip('-hd')
+        filename = str(re.sub("\[\d{4}-\d{1,2}-\d{1,2}\] - ", "", filepath))  # 去除文件名中时间
         if 'FC2' or 'fc2' in filename:
-            filename = filename.replace('PPV','').replace('ppv','').replace('--','-').replace('_','-')
-        file_number = re.search(r'\w+-\w+', filename, re.A).group()
+            filename = filename.replace('-PPV', '').replace('PPV-', '').replace('FC2PPV-', 'FC2-').replace(
+                'FC2PPV_', 'FC2-')
+        # file_number = re.search(r'\w+-\w+', filename, re.A).group() #org
+        if re.search(r"\d{5,6}.\d{2,3}",filename) and 'h0930' not in filename.lower() and 'h4610' not in filename.lower() and 'c0930' not in filename.lower():
+            file_number = re.search(r'\d{5,6}.\d{2,3}', filename, re.A).group()
+        else:
+            file_number = re.search(r'\w+-\w+', filename.replace('_', '-'), re.A).group()
         return file_number
     else:  # 提取不含减号-的番号，FANZA CID
         try:
             return str(re.findall(r'(.+?)\.', str(re.search('([^<>/\\\\|:""\\*\\?]+)\\.\\w+$', filepath).group()))).strip("['']").replace('_', '-')
         except:
             return re.search(r'(.+?)\.', filepath)[0]
-
-
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod(raise_on_error=True)
